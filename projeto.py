@@ -9,6 +9,39 @@
 # contabilizando numero de repetição de cada palavra
 import re
 import os
+import xml.etree.ElementTree as ET
+
+
+# cria a arvore xml como: palavras -> documentos -> quantia da palavra
+def saveIndexacaoXML(index: dict, path: str):
+    root = ET.Element("indexTerms")
+    for palavra in index:
+        word = ET.SubElement(root, "palavra", value=palavra)
+        for doc in index[palavra]:
+            documento = ET.SubElement(word, "documento", value=doc)
+            ET.SubElement(documento, "quantia", value=str(index[palavra][doc]))
+
+    tree = ET.ElementTree(root)
+    tree.write(path, encoding="utf-8", xml_declaration=True)
+
+
+def readIndexacaoXML(path: str) -> dict:
+    words = dict()
+    tree = ET.parse(path)
+    root = tree.getroot()
+
+    palavras = root.findall("palavra")
+
+    for palavra in palavras:
+        documentos = palavra.findall("documento")
+        file = dict()
+        for documento in documentos:
+            quantia = documento.find("quantia")
+            if quantia is not None:
+                file[documento.attrib["value"]] = quantia.attrib["value"]
+
+        words[palavra.attrib["value"]] = file
+    return words
 
 
 def indexacao():
@@ -24,8 +57,7 @@ def indexacao():
             for linha in conteudo.splitlines():
                 if linha != "\n":
                     # divide usando a regex (a-z A-Z 0-9 _)
-                    # linha = re.split(r"\W+", linha)
-                    linha = linha.split(" ")
+                    linha = re.split(r"\W+", linha)
                     for palavra in linha:
                         palavra = palavra.lower()
                         if (
@@ -40,9 +72,12 @@ def indexacao():
                                 # add 1 na frequencia daquela palavra naquele arquivo
                                 words[palavra][nome_arquivo] += 1
 
-    save = open("index.txt", "w")
-    save.write("{}".format(words))
-    save.close()
+    # save = open("index.txt", "w")
+    # save.write("{}".format(words))
+    # save.close()
+    # escreve num documento .xml
+    saveIndexacaoXML(words, "indexacao.xml")
+    readIndexacaoXML("indexacao.xml")
 
 
 if __name__ == "__main__":
