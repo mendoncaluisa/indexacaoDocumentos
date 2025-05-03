@@ -1,11 +1,7 @@
-
 import re
 import os
-import copy
 import xml.etree.ElementTree as ET
 from collections import defaultdict, Counter
-
-from numpy.ma.core import append
 
 
 # cria a arvore xml como: palavras -> documentos -> quantia da palavra
@@ -40,15 +36,16 @@ def readIndexacaoXML(path: str) -> dict:
     return words
 
 
-def indexacao():
+def indexacao(value_filter: int):
 
     dir_path = "./documentos"
     words = defaultdict(lambda: defaultdict(int))
     total_words = Counter()  # Usando Counter para contagem total
 
     # Filtra apenas arquivos (ignora diretórios)
-    arquivos = [f for f in os.listdir(dir_path)
-                if os.path.isfile(os.path.join(dir_path, f))]
+    arquivos = [
+        f for f in os.listdir(dir_path) if os.path.isfile(os.path.join(dir_path, f))
+    ]
 
     for nome_arquivo in arquivos:
         try:
@@ -59,27 +56,42 @@ def indexacao():
 
                 for palavra in palavras:
                     # Filtra palavras não desejadas
-                    if not any(caractere in palavra for caractere in ("-", "_")) \
-                            and palavra != "não" and len(palavra) > 2:
+                    if (
+                        not any(caractere in palavra for caractere in ("-", "_"))
+                        and palavra != "não"
+                        and len(palavra) > 2
+                    ):
                         words[palavra][nome_arquivo] += 1
                         total_words[palavra] += 1  # Incrementa contador total
 
         except (IOError, UnicodeDecodeError) as e:
             print(f"Erro ao processar {nome_arquivo}: {str(e)}")
 
+    # filtra os 50 maiores palavras do dicionario:
+    words = dict(
+        sorted(words.items(), key=lambda item: sum(item[1].values()), reverse=True)[:value_filter]
+    )
 
-    # save = open("index.txt", "w")
-    # save.write("{}".format(words))
-    # save.close()
-    # escreve num documento .xml
-    saveIndexacaoXML(words_filtered, "indexacao.xml")
+    saveIndexacaoXML(words, "indexacao.xml")
     readIndexacaoXML("indexacao.xml")
-    return words_filtered
+    return words
 
-def imprime_vocabulario(words: dict) :
-    print(words)
 
-def imprime_matriz_ocorrências(words: dict) :
+def imprime_vocabulario(words: dict):
+    palavras = words.keys()
+    count = 1
+    for palavra in palavras:
+        print("{} - {}".format(count, palavra), end="")
+        if count % 10 == 0:
+            print()
+        else:
+            print(" | ", end="")
+
+        count += 1
+    print()
+
+
+def imprime_matriz_ocorrências(words: dict):
     for palavra, documentos in words.items():
         print(f"\nPalavra: {palavra}")
         for doc, count in documentos.items():
@@ -109,12 +121,10 @@ if __name__ == "__main__":
         opcao = input("\nDIGITE A OPÇÃO DESEJADA: ")
 
         if opcao == "1":
-            words_filtered = indexacao()
+            words_filtered = indexacao(50)
 
         elif opcao == "2":
             imprime_vocabulario(words_filtered)
 
         elif opcao == "0":
             break
-
-
