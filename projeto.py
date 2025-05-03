@@ -76,8 +76,11 @@ def indexacao():
     readIndexacaoXML("indexacao.xml")
     return words_filtered
 
-def imprime_vocabulario(words_filtered: dict) :
-    for palavra, documentos in words_filtered.items():
+def imprime_vocabulario(words: dict) :
+    print(words)
+
+def imprime_matriz_ocorrências(words: dict) :
+    for palavra, documentos in words.items():
         print(f"\nPalavra: {palavra}")
         for doc, count in documentos.items():
             print(f"  - {doc}: {count} ocorrências")
