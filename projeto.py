@@ -3,6 +3,11 @@ import os
 import xml.etree.ElementTree as ET
 from collections import defaultdict, Counter
 from lark import Lark, Transformer
+from colorama import init, Fore
+
+
+# inicializando colorama
+init(autoreset=True)
 
 
 # cria a arvore xml como: palavras -> documentos -> quantia da palavra
@@ -80,7 +85,7 @@ def indexacao(value_filter: int):
                         total_words[palavra] += 1  # Incrementa contador total
 
         except (IOError, UnicodeDecodeError) as e:
-            print(f"Erro ao processar {nome_arquivo}: {str(e)}")
+            print(Fore.RED + f"Erro ao processar {nome_arquivo}: {str(e)}")
 
     # filtra os 50 mais frequentes palavras do dicionario:
     words = dict(
@@ -105,11 +110,11 @@ def imprime_vocabulario(words: dict):
     palavras = words.keys()
     count = 1
     for palavra in palavras:
-        print("{} - {}".format(count, palavra), end="")
+        print(Fore.YELLOW + "{} - {}".format(count, palavra), end="")
         if count % 10 == 0:
             print()
         else:
-            print(" | ", end="")
+            print(Fore.YELLOW + " | ", end="")
 
         count += 1
     print()
@@ -117,19 +122,19 @@ def imprime_vocabulario(words: dict):
 
 def imprime_matriz_ocorrencia(words: dict):
     for palavra, documentos in words.items():
-        print(f"\nPalavra: {palavra}")
+        print(Fore.YELLOW + f"\nPalavra: {palavra}")
         for doc, count in documentos.items():
             if count > 0:
-                print(f"  - {doc}: 1 ")
+                print(Fore.YELLOW + f"  - {doc}: 1 ")
             else:
-                print(f"  - {doc}: 0 ")
+                print(Fore.LIGHTYELLOW_EX + f"  - {doc}: 0 ")
 
 
 def imprime_matriz_frequencia(words: dict):
     for palavra, documentos in words.items():
-        print(f"\nPalavra: {palavra}")
+        print(Fore.YELLOW + f"\nPalavra: {palavra}")
         for doc, count in documentos.items():
-            print(f"  - {doc}: {count} ocorrências")
+            print(Fore.YELLOW + f"  - {doc}: {count} ocorrências")
 
 
 def contar_operadores(expressao):
@@ -198,22 +203,67 @@ if __name__ == "__main__":
 
     while opcao != "0":
 
-        print("***************************************************************")
-        print("***** TRABALHO DE RECUPERAÇÃO DE INFORMAÇÃO     ***************")
-        print("***************************************************************")
-        print("***** ALUNOS: IVAN MARCELINO OLIVEIRA           ***************")
-        print("*****         MARIA LUÍSA MENDONÇA OLIVEIRA     ***************")
-        print("***************************************************************")
-        print("************************ MENU *********************************")
-        print("***** 1 - PARA INDEXAR A COLEÇÃO                ***************")
-        print("***** 2 - PARA IMPRIMIR O VOCABULÁRIO           ***************")
-        print("***** 3 - PARA IMPRIMIR A MATRIZ DE OCORRÊNCIAS ***************")
-        print("***** 4 - PARA IMPRIMIR A MATRIZ DE FREQUÊNCIAS ***************")
-        print("***** 5 - PARA IMPORTAR A MATRIZ DE FREQUÊNCIAS ***************")
-        print("***** 6 - PARA REALIZAR BUSCA DE DOCUMENTOS     ***************")
-        print("***** 0 - PARA SAIR                             ***************")
-        print("***************************************************************")
-        opcao = input("\nDIGITE A OPÇÃO DESEJADA: ")
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***************************************************************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***** TRABALHO DE RECUPERAÇÃO DE INFORMAÇÃO     ***************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***************************************************************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***** ALUNOS: IVAN MARCELINO OLIVEIRA           ***************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "*****         MARIA LUÍSA MENDONÇA OLIVEIRA     ***************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***************************************************************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "************************ MENU *********************************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***** 1 - PARA INDEXAR A COLEÇÃO                ***************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***** 2 - PARA IMPRIMIR O VOCABULÁRIO           ***************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***** 3 - PARA IMPRIMIR A MATRIZ DE OCORRÊNCIAS ***************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***** 4 - PARA IMPRIMIR A MATRIZ DE FREQUÊNCIAS ***************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***** 5 - PARA IMPORTAR A MATRIZ DE FREQUÊNCIAS ***************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***** 6 - PARA REALIZAR BUSCA DE DOCUMENTOS     ***************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***** 0 - PARA SAIR                             ***************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
+            + "***************************************************************"
+        )
+        opcao = input(Fore.GREEN + "\nDIGITE A OPÇÃO DESEJADA: ")
 
         if opcao == "1":
             words_filtered = indexacao(50)
@@ -223,7 +273,8 @@ if __name__ == "__main__":
                 imprime_vocabulario(words_filtered)
             else:
                 print(
-                    "* Arquivos ainda não foram indexados!                            *"
+                    Fore.RED
+                    + "* Arquivos ainda não foram indexados!                            *"
                 )
 
         elif opcao == "3":
@@ -231,7 +282,8 @@ if __name__ == "__main__":
                 imprime_matriz_ocorrencia(words_filtered)
             else:
                 print(
-                    "* Arquivos ainda não foram indexados!                            *"
+                    Fore.RED
+                    + "* Arquivos ainda não foram indexados!                            *"
                 )
 
         elif opcao == "4":
@@ -239,7 +291,8 @@ if __name__ == "__main__":
                 imprime_matriz_frequencia(words_filtered)
             else:
                 print(
-                    "* Arquivos ainda não foram indexados!                            *"
+                    Fore.RED
+                    + "* Arquivos ainda não foram indexados!                            *"
                 )
 
         elif opcao == "5":
@@ -247,81 +300,103 @@ if __name__ == "__main__":
 
         elif opcao == "6":
             if words_filtered:
-                print("\n" + "*" * 70)
+                print(Fore.LIGHTBLUE_EX + "\n" + "*" * 70)
                 print(
-                    "* CAMPO DE CONSULTA                                              *"
+                    Fore.LIGHTBLUE_EX
+                    + "* CAMPO DE CONSULTA                                              *"
                 )
-                print("*" * 70)
+                print(Fore.LIGHTBLUE_EX + "*" * 70)
                 print(
-                    "* Você pode realizar consultas utilizando termos e operadores    *"
-                )
-                print(
-                    "* booleanos. Os operadores permitidos são:                       *"
-                )
-                print(
-                    "*                                                                *"
+                    Fore.LIGHTBLUE_EX
+                    + "* Você pode realizar consultas utilizando termos e operadores    *"
                 )
                 print(
-                    "*   - AND: para buscar documentos que contenham ambos os termos  *"
+                    Fore.LIGHTBLUE_EX
+                    + "* booleanos. Os operadores permitidos são:                       *"
                 )
                 print(
-                    "*   - OR : para buscar documentos que contenham pelo menos um    *"
+                    Fore.LIGHTBLUE_EX
+                    + "*                                                                *"
                 )
                 print(
-                    "*          dos termos                                            *"
+                    Fore.LIGHTBLUE_EX
+                    + "*   - AND: para buscar documentos que contenham ambos os termos  *"
                 )
                 print(
-                    "*   - NOT: para buscar documentos que não contenham o termo      *"
+                    Fore.LIGHTBLUE_EX
+                    + "*   - OR : para buscar documentos que contenham pelo menos um    *"
                 )
                 print(
-                    "*          posterior a ele                                       *"
+                    Fore.LIGHTBLUE_EX
+                    + "*          dos termos                                            *"
                 )
                 print(
-                    "*                                                                *"
+                    Fore.LIGHTBLUE_EX
+                    + "*   - NOT: para buscar documentos que não contenham o termo      *"
                 )
                 print(
-                    "* Exemplo de consultas válidas:                                  *"
+                    Fore.LIGHTBLUE_EX
+                    + "*          posterior a ele                                       *"
                 )
                 print(
-                    "*   gato AND cachorro                                            *"
+                    Fore.LIGHTBLUE_EX
+                    + "*                                                                *"
                 )
                 print(
-                    "*   carro OR moto                                                *"
+                    Fore.LIGHTBLUE_EX
+                    + "* Exemplo de consultas válidas:                                  *"
                 )
                 print(
-                    "*   livro AND autor OR editora                                   *"
+                    Fore.LIGHTBLUE_EX
+                    + "*   gato AND cachorro                                            *"
                 )
                 print(
-                    "*   NOT planta AND NOT animal                                    *"
+                    Fore.LIGHTBLUE_EX
+                    + "*   carro OR moto                                                *"
                 )
                 print(
-                    "*                                                                *"
+                    Fore.LIGHTBLUE_EX
+                    + "*   livro AND autor OR editora                                   *"
                 )
                 print(
-                    "* ATENÇÃO: Só é permitida a combinação de no máximo dois         *"
+                    Fore.LIGHTBLUE_EX
+                    + "*   NOT planta AND NOT animal                                    *"
                 )
                 print(
-                    "* operadores booleanos por consulta.                             *"
+                    Fore.LIGHTBLUE_EX
+                    + "*                                                                *"
                 )
-                print("*" * 70)
-
-                expressao = input("\nDIGITE A EXPRESSÃO: ")
+                print(
+                    Fore.LIGHTBLUE_EX
+                    + "* ATENÇÃO: Só é permitida a combinação de no máximo dois         *"
+                )
+                print(
+                    Fore.LIGHTBLUE_EX
+                    + "* operadores booleanos por consulta.                             *"
+                )
+                print(Fore.LIGHTBLUE_EX + "*" * 70)
+                expressao = input(Fore.GREEN + "\nDIGITE A EXPRESSÃO: ")
 
                 # Verifica se há no máximo 2 operadores 'and'/'or'
                 if contar_operadores(expressao) > 2:
                     print(
-                        "\nErro: A expressão deve conter no máximo **dois operadores booleanos** (and/or)."
+                        Fore.RED
+                        + "\nErro: A expressão deve conter no máximo **dois operadores booleanos** (and/or)."
                     )
 
                 # realiza a busca busca_logica
                 result = busca_logica(words_filtered, expressao)
                 if result:
-                    print(f"{expressao} -> {result}")
+                    print(Fore.YELLOW + f"{expressao} -> {result}")
                 else:
-                    print(f"{expressao} -> Nenhum documento que satisfaça a busca!")
+                    print(
+                        Fore.RED
+                        + f"{expressao} -> Nenhum documento que satisfaça a busca!"
+                    )
             else:
                 print(
-                    "* Arquivos ainda não foram indexados!                            *"
+                    Fore.RED
+                    + "* Arquivos ainda não foram indexados!                            *"
                 )
 
         elif opcao == "0":
