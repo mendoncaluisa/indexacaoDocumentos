@@ -184,7 +184,7 @@ def busca_logica(index: dict, query: str):
 
     # diicionario que vincula as palavras aos documentos somente
     presence = {
-        term: {doc for doc, freq in doc_freq.items() if freq > 0}
+        term: {doc for doc, freq in doc_freq.items() if int(freq) > 0}
         for term, doc_freq in index.items()
     }
 
