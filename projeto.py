@@ -79,6 +79,8 @@ def indexacao(value_filter: int):
                     if (
                         not any(caractere in palavra for caractere in ("-", "_"))
                         and palavra != "não"
+                        and palavra != "sim"
+                        and palavra != "yes"
                         and len(palavra) > 2
                     ):
                         words[palavra][nome_arquivo] += 1
