@@ -418,8 +418,24 @@ if __name__ == "__main__":
         elif opcao == "7":
             if doc_words and words_filtered:
                 query = input("Digite as palavras a serem pesquisadas: ")
-                result = apply_query(words_filtered, doc_words, query)
-                print(result)
+                result = apply_query(words_filtered, doc_words, query.lower())
+
+                # Ordena por nome da chave (ordem alfabética)
+                sorted_result = sorted(result.items(), key=lambda item: item[0])
+
+                aux = 0
+                linha = []
+                for res, val in sorted_result:
+                    linha.append(Fore.YELLOW + f"{res}: {val:.4f}")
+                    aux += 1
+
+                    if aux % 5 == 0:
+                        print(Fore.GREEN + " | ".join(linha))
+                        linha = []
+
+                if linha:
+                    print(Fore.GREEN + " | ".join(linha))
+
             else:
                 print(Fore.RED + "Primeiro indexe os arquivos!")
         elif opcao == "0":
