@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict, Counter
 from lark import Lark, Transformer
 from colorama import init, Fore
+from vetorial import apply_query
 
 
 # inicializando colorama
@@ -37,8 +38,9 @@ def saveIndexacaoBoolXML(index: dict, path: str):
     tree.write(path, encoding="utf-8", xml_declaration=True)
 
 
-def readIndexacaoXML(path: str) -> dict:
+def readIndexacaoXML(path: str):
     words = dict()
+    doc_words = dict()
     tree = ET.parse(path)
     root = tree.getroot()
 
@@ -47,13 +49,17 @@ def readIndexacaoXML(path: str) -> dict:
     for palavra in palavras:
         documentos = palavra.findall("documento")
         file = dict()
+        aux = 0
         for documento in documentos:
             quantia = documento.find("frequencia")
             if quantia is not None:
                 file[documento.attrib["value"]] = quantia.attrib["value"]
+                if int(quantia.attrib["value"]) > 0:
+                    aux += 1
 
         words[palavra.attrib["value"]] = file
-    return words
+        doc_words[palavra.attrib["value"]] = aux
+    return words, doc_words
 
 
 def indexacao(value_filter: int):
@@ -61,6 +67,7 @@ def indexacao(value_filter: int):
     dir_path = "./documentos"
     words = defaultdict(lambda: defaultdict(int))
     total_words = Counter()  # Usando Counter para contagem total
+    aparece = defaultdict(int)
 
     # Filtra apenas arquivos (ignora diretórios)
     arquivos = [
@@ -68,6 +75,7 @@ def indexacao(value_filter: int):
     ]
 
     for nome_arquivo in arquivos:
+        adicionadas = list()
         try:
             with open(os.path.join(dir_path, nome_arquivo), "r", encoding="utf-8") as f:
                 conteudo = f.read()
@@ -85,6 +93,9 @@ def indexacao(value_filter: int):
                     ):
                         words[palavra][nome_arquivo] += 1
                         total_words[palavra] += 1  # Incrementa contador total
+                        if palavra not in adicionadas:
+                            aparece[palavra] += 1
+                            adicionadas.append(palavra)
 
         except (IOError, UnicodeDecodeError) as e:
             print(Fore.RED + f"Erro ao processar {nome_arquivo}: {str(e)}")
@@ -105,7 +116,7 @@ def indexacao(value_filter: int):
     saveIndexacaoXML(words, "indexacao_freq.xml")
     saveIndexacaoBoolXML(words, "indexacao_ocorrencia.xml")
 
-    return words
+    return words, aparece
 
 
 def imprime_vocabulario(words: dict):
@@ -201,6 +212,7 @@ if __name__ == "__main__":
 
     opcao = 1
     words_filtered = defaultdict(lambda: defaultdict(int))
+    doc_words = defaultdict(int)
 
     while opcao != "0":
 
@@ -258,6 +270,10 @@ if __name__ == "__main__":
         )
         print(
             Fore.LIGHTBLUE_EX
+            + "***** 7 - CONSULTA USANDO MODELO VETORIAL     *****************"
+        )
+        print(
+            Fore.LIGHTBLUE_EX
             + "***** 0 - PARA SAIR                             ***************"
         )
         print(
@@ -267,7 +283,7 @@ if __name__ == "__main__":
         opcao = input(Fore.GREEN + "\nDIGITE A OPÇÃO DESEJADA: ")
 
         if opcao == "1":
-            words_filtered = indexacao(50)
+            words_filtered, doc_words = indexacao(50)
 
         elif opcao == "2":
             if words_filtered:
@@ -297,7 +313,7 @@ if __name__ == "__main__":
                 )
 
         elif opcao == "5":
-            words_filtered = readIndexacaoXML("indexacao_freq.xml")
+            words_filtered, doc_words = readIndexacaoXML("indexacao_freq.xml")
 
         elif opcao == "6":
             if words_filtered:
@@ -399,6 +415,12 @@ if __name__ == "__main__":
                     Fore.RED
                     + "* Arquivos ainda não foram indexados!                            *"
                 )
-
+        elif opcao == "7":
+            if doc_words and words_filtered:
+                query = input("Digite as palavras a serem pesquisadas: ")
+                result = apply_query(words_filtered, doc_words, query)
+                print(result)
+            else:
+                print(Fore.RED + "Primeiro indexe os arquivos!")
         elif opcao == "0":
             break
