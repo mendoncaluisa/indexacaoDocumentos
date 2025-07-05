@@ -421,7 +421,9 @@ if __name__ == "__main__":
                 result = apply_query(words_filtered, doc_words, query.lower())
 
                 # Ordena por nome da chave (ordem alfabética)
-                sorted_result = sorted(result.items(), key=lambda item: item[0])
+                sorted_result = sorted(
+                    result.items(), key=lambda item: item[1], reverse=True
+                )
 
                 aux = 0
                 linha = []
