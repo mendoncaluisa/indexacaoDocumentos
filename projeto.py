@@ -12,7 +12,7 @@ from vetorial import apply_query
 init(autoreset=True)
 
 # TODO: retirar
-dictTeste = [
+Q_REDES = [
     "doc1.txt",
     "doc8.txt",
     "doc22.txt",
@@ -23,6 +23,33 @@ dictTeste = [
     "doc324.txt",
     "doc326.txt",
     "doc349.txt",
+]
+
+
+Q_SOFTWARE = [
+    "doc13.txt",
+    "doc15.txt",
+    "doc90.txt",
+    "doc107.txt",
+    "doc180.txt",
+    "doc187.txt",
+    "doc130.txt",
+    "doc135.txt",
+    "doc253.txt",
+    "doc328.txt",
+]
+
+Q_INFORMACAO = [
+    "doc14.txt",
+    "doc19.txt",
+    "doc23.txt",
+    "doc26.txt",
+    "doc28.txt",
+    "doc55.txt",
+    "doc60.txt",
+    "doc72.txt",
+    "doc100.txt",
+    "doc150.txt",
 ]
 
 
@@ -422,7 +449,12 @@ if __name__ == "__main__":
                     print(Fore.YELLOW + f"{expressao} -> {result}")
 
                     # print p@n
-                    calcula_avaliacao(result, dictTeste)
+                    if expressao == "redes":
+                        calcula_avaliacao(result, Q_REDES)
+                    elif expressao == "software":
+                        calcula_avaliacao(result, Q_SOFTWARE)
+                    elif expressao == "informacao":
+                        calcula_avaliacao(result, Q_INFORMACAO)
                 else:
                     print(
                         Fore.RED
@@ -457,7 +489,12 @@ if __name__ == "__main__":
                     print(Fore.GREEN + " | ".join(linha))
 
                 # print p@n
-                calcula_avaliacao(sorted_result, dictTeste)
+                if query == "redes":
+                    calcula_avaliacao(sorted_result, Q_REDES)
+                elif query == "software":
+                    calcula_avaliacao(sorted_result, Q_SOFTWARE)
+                elif query == "informacao":
+                    calcula_avaliacao(sorted_result, Q_INFORMACAO)
 
             else:
                 print(Fore.RED + "Primeiro indexe os arquivos!")
