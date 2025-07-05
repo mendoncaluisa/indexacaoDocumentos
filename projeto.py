@@ -4,11 +4,26 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict, Counter
 from lark import Lark, Transformer
 from colorama import init, Fore
+from avaliacao import calcula_avaliacao
 from vetorial import apply_query
 
 
 # inicializando colorama
 init(autoreset=True)
+
+# TODO: retirar
+dictTeste = [
+    "doc1.txt",
+    "doc8.txt",
+    "doc22.txt",
+    "doc27.txt",
+    "doc224.txt",
+    "doc267.txt",
+    "doc300.txt",
+    "doc324.txt",
+    "doc326.txt",
+    "doc349.txt",
+]
 
 
 # cria a arvore xml como: palavras -> documentos -> quantia da palavra
@@ -137,7 +152,7 @@ def imprime_matriz_ocorrencia(words: dict):
     for palavra, documentos in words.items():
         print(Fore.YELLOW + f"\nPalavra: {palavra}")
         for doc, count in documentos.items():
-            if count > 0:
+            if int(count) > 0:
                 print(Fore.YELLOW + f"  - {doc}: 1 ")
             else:
                 print(Fore.LIGHTYELLOW_EX + f"  - {doc}: 0 ")
@@ -405,6 +420,9 @@ if __name__ == "__main__":
                 result = busca_logica(words_filtered, expressao)
                 if result:
                     print(Fore.YELLOW + f"{expressao} -> {result}")
+
+                    # print p@n
+                    calcula_avaliacao(result, dictTeste)
                 else:
                     print(
                         Fore.RED
@@ -421,7 +439,9 @@ if __name__ == "__main__":
                 result = apply_query(words_filtered, doc_words, query.lower())
 
                 # Ordena por nome da chave (ordem alfabética)
-                sorted_result = sorted(result.items(), key=lambda item: item[0])
+                sorted_result = sorted(
+                    result.items(), key=lambda item: item[1], reverse=True
+                )
 
                 aux = 0
                 linha = []
@@ -435,6 +455,9 @@ if __name__ == "__main__":
 
                 if linha:
                     print(Fore.GREEN + " | ".join(linha))
+
+                # print p@n
+                calcula_avaliacao(sorted_result, dictTeste)
 
             else:
                 print(Fore.RED + "Primeiro indexe os arquivos!")
