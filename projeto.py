@@ -137,7 +137,7 @@ def imprime_matriz_ocorrencia(words: dict):
     for palavra, documentos in words.items():
         print(Fore.YELLOW + f"\nPalavra: {palavra}")
         for doc, count in documentos.items():
-            if count > 0:
+            if int(count) > 0:
                 print(Fore.YELLOW + f"  - {doc}: 1 ")
             else:
                 print(Fore.LIGHTYELLOW_EX + f"  - {doc}: 0 ")
