@@ -103,9 +103,11 @@ def tf_idf_query(words: dict, aparece: dict, query: str) -> dict:
     for palavra in query.split():
         quantia_palavras[palavra] += 1
     for palavra in query.split():
-        tf_idf[palavra] = calc_tf_idf(
-            tot_docs, aparece[palavra], quantia_palavras[palavra]
-        )
+        if palavra in aparece.keys():
+            tf_idf[palavra] = calc_tf_idf(
+                tot_docs, aparece[palavra], quantia_palavras[palavra]
+            )
+        else: tf_idf[palavra] = 0
 
     return tf_idf
 

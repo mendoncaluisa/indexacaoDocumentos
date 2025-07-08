@@ -11,7 +11,6 @@ from vetorial import apply_query
 # inicializando colorama
 init(autoreset=True)
 
-# TODO: retirar
 Q_REDES = [
     "doc1.txt",
     "doc8.txt",
